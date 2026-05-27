@@ -10,3 +10,18 @@ Horus: A custom Task Manager and monitor featuring dynamic dasboards for RAM and
 | Sofía | BackDev | Algoritmos de Paginación |
 | Adal | BackDEV | Algoritmos de Paginación |
 | Uriel | BackDEV | Estandarización y manejo de clases |
+
+# Organización Carpetas
+
+- SRC (codigo Python)
+- Main (html)
+- JS
+- CSS
+
+- ## BackEnd
+
+- ## API
+
+	
+
+- ## FrontEnd
