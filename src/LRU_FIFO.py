@@ -47,7 +47,8 @@ class LRU:
 		print("porcentaje ",self.pg)
 		print("numero de fallos ",self.f)
 		print("hits ",self.h)
-lru=LRU(10,4)
+	def send(self):
+		return {"metodo":"LRU","cadena": self.s, "fallos":self.f,"hits":self.h,"porcentaje":self.pg,"nivel fallos":self.r}
 class FIFO:
 	def __init__(self, n, p):
 		self.n=n
@@ -92,4 +93,5 @@ class FIFO:
 		print("porcentaje ",self.pg)
 		print("numero de fallos ",self.f)
 		print("hits ",self.h)
-fifo=FIFO(10,4)
+	def send(self):
+                return {"metodo":"FIFO","cadena": self.s, "fallos":self.f,"hits":self.h,"porcentaje":self.pg,"nivel fallos":self.r}
