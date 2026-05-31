@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horus — Monitor del Sistema</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+<div class="d-flex" id="wrapper">
+
+    <nav id="sidebar" class="d-flex flex-column flex-shrink-0">
+
+        <div class="sidebar-logo d-flex align-items-center gap-2 px-3 py-3 border-bottom border-dark">
+            <div class="logo-icon d-flex align-items-center justify-content-center flex-shrink-0">
+                <i class="bi bi-cpu-fill"></i>
+            </div>
+            <span class="logo-text fw-semibold">Horus</span>
+        </div>
+
+        <button class="toggle-btn" id="toggleBtn" aria-label="Colapsar sidebar">
+            <i class="bi bi-chevron-left" id="toggle-icon"></i>
+        </button>
+
+        <ul class="nav flex-column flex-grow-1 pt-2 overflow-hidden">
+
+            <li class="section-label px-3 pt-3 pb-1">Monitor</li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link nav-item-link active" onclick="setActive(event,this)">
+                    <span class="nav-icon"><i class="bi bi-memory"></i></span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link nav-item-link" onclick="setActive(event,this)">
+                    <span class="nav-icon"><i class="bi bi-device-hdd"></i></span>
+                    <span class="nav-label">Memoria</span>
+                </a>
+            </li>
+
+            <li class="section-label px-3 pt-3 pb-1">Sistema</li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link nav-item-link" onclick="setActive(event,this)">
+                    <span class="nav-icon"><i class="bi bi-app-indicator"></i></span>
+                    <span class="nav-label">Algoritmos de Paginación</span>
+                </a>
+            </li>
+        </ul>
+
+    </nav>
+
+    <main class="flex-grow-1 overflow-auto p-3 p-md-4" id="mainContent">
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="metric-card h-100">
+                    <div class="metric-label">Total RAM</div>
+                    <div class="metric-value">32 GB</div>
+                    <div class="metric-sub">DDR5-4800 MHz</div>
+                    <div class="metric-bar mt-2"><div class="metric-bar-fill blue" id="bar-total" style="width:67%"></div></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="metric-card h-100">
+                    <div class="metric-label">En uso</div>
+                    <div class="metric-value" id="mem-used">21.4 GB</div>
+                    <div class="metric-sub warn" id="mem-pct">66.9% del total</div>
+                    <div class="metric-bar mt-2"><div class="metric-bar-fill orange" id="bar-used" style="width:67%"></div></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="metric-card h-100">
+                    <div class="metric-label">Disponible</div>
+                    <div class="metric-value" id="mem-free">10.6 GB</div>
+                    <div class="metric-sub">Libre + caché liberable</div>
+                    <div class="metric-bar mt-2"><div class="metric-bar-fill green" id="bar-free" style="width:33%"></div></div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="metric-card h-100">
+                    <div class="metric-label">Swap en uso</div>
+                    <div class="metric-value" id="swap-used">1.2 GB</div>
+                    <div class="metric-sub">de 8 GB total</div>
+                    <div class="metric-bar mt-2"><div class="metric-bar-fill purple" id="bar-swap" style="width:15%"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Donut + Process List ── -->
+        <div class="row g-3 mb-3">
+
+            <!-- Donut -->
+            <div class="col-12 col-lg-5">
+                <div class="card-dark h-100">
+
+                    <div class="card-title-row">
+                        <i class="bi bi-pie-chart-fill"></i>
+                        Distribución por aplicación
+                    </div>
+
+                    <div class="chart-wrapper">
+
+                        <div class="donut-container">
+
+                            <canvas id="donutChart"></canvas>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Process List -->
+            <div class="col-12 col-lg-7">
+                <div class="card-dark h-100">
+                    <div class="card-title-row">
+                        <i class="bi bi-list-ul"></i>
+                        Top procesos
+                    </div>
+                    <div id="Top_procesos" class="d-flex flex-column gap-3">
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Paging + Faults ── -->
+        <div class="row g-3 mb-3">
+
+            <!-- Paging -->
+            <div class="col-12 col-md-6">
+                <div class="card-dark h-100">
+                    <div class="card-title-row">
+                        <i class="bi bi-arrow-left-right"></i>
+                        Paginación del SO
+                    </div>
+                    <div class="section-sub mb-2">Páginas: física vs virtual</div>
+                    <div class="paging-bar-wrap mb-3">
+                        <div class="paging-seg" style="width:42%;background:#4f8ef7">RAM 42%</div>
+                        <div class="paging-seg" style="width:31%;background:#a78bfa">Caché 31%</div>
+                        <div class="paging-seg" style="width:8%;background:#38bdf8">Buf 8%</div>
+                        <div class="paging-seg" style="width:19%;background:#1e2740;color:#4a5568">Libre 19%</div>
+                    </div>
+                    <div class="stat-row"><span class="stat-key">Páginas activas</span><span class="stat-val" id="pag-activas">187 432</span></div>
+                    <div class="stat-row"><span class="stat-key">En mem. virtual</span><span class="stat-val" id="pag-virtual">49 810</span></div>
+                    <div class="stat-row"><span class="stat-key">Tamaño de página</span><span class="stat-val">4 KB</span></div>
+                    <div class="stat-row"><span class="stat-key">Huge pages</span><span class="stat-val">2 MB</span></div>
+                </div>
+            </div>
+
+            <!-- Faults -->
+            <div class="col-12 col-md-6">
+                <div class="card-dark h-100">
+                    <div class="card-title-row">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Fallos de página
+                    </div>
+                    <div class="faults-big faults-minor" id="faults-minor">
+                        2 841 <span class="faults-unit">menores/s</span>
+                    </div>
+                    <div class="fault-desc mb-3">Resueltos desde caché — sin I/O a disco</div>
+                    <div class="faults-big faults-major" id="faults-major">
+                        47 <span class="faults-unit">mayores/s</span>
+                    </div>
+                    <div class="fault-desc mb-2">Requieren lectura de disco (swap / archivo)</div>
+                    <div class="ratio-row d-flex align-items-center gap-2 flex-wrap">
+                        <i class="bi bi-graph-up"></i>
+                        Ratio mayor/menor:
+                        <span class="ratio-val" id="ratio-val">1.6%</span>
+                        — dentro del umbral aceptable
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Line Chart ── -->
+        <div class="card-dark mb-4">
+            <div class="card-title-row">
+                <i class="bi bi-activity"></i>
+                Historial de uso de memoria (últimos 60s)
+            </div>
+            <div class="d-flex gap-4 mb-2">
+                <span class="d-flex align-items-center gap-2 legend-item-inline">
+                    <span class="legend-sq" style="background:#4f8ef7"></span> RAM usada %
+                </span>
+                <span class="d-flex align-items-center gap-2 legend-item-inline">
+                    <span class="legend-sq" style="background:#a78bfa;opacity:.7"></span> Swap %
+                </span>
+            </div>
+            <div class="line-chart-wrap">
+                <canvas id="lineChart" role="img"
+                    aria-label="Historial de uso de memoria RAM y swap en los últimos 60 segundos">
+                    Historial de memoria RAM.
+                </canvas>
+            </div>
+        </div>
+
+    </main>
+    <!-- ========== END MAIN ========== -->
+
+</div>
+<!-- ========== END WRAPPER ========== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
